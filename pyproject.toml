@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "shapley-value-for-circuit"
+version = "0.1.0"
+description = "Polynomial circuit-local Shapley attribution for single boolean circuit samples."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "GGN_2015", email = "neko@jlulug.org" },
+]
+dependencies = [
+  "circuit-static-description>=0.1.9,<0.2",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
