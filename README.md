@@ -21,6 +21,12 @@ pip install -e .[test]
 pytest
 ```
 
+For heatmap visualization:
+
+```bash
+pip install -e .[viz]
+```
+
 ## Quick Start
 
 ```python
@@ -28,8 +34,8 @@ from circuit_static_description import Circuit
 from shapley_value_for_circuit import explain, shapley_values
 
 circuit = Circuit(
-    2, # number of input
-    1, # number of output
+    2,  # Number of inputs.
+    1,  # Number of outputs.
     outputs=["AND(I0, I1)"],
 )
 
@@ -182,6 +188,53 @@ The result always satisfies:
 ```python
 result.base_value + sum(result.values) == result.output_value
 ```
+
+## Heatmap Visualization
+
+You can fold a one-dimensional local Shapley vector into rows with `K` columns
+and visualize it as a heatmap. This is useful when the circuit inputs originally
+represent a grid, image, board, or any other fixed-width layout.
+
+```python
+from circuit_static_description import Circuit
+from shapley_value_for_circuit import (
+    explain,
+    fold_shapley_values,
+    save_shapley_heatmap,
+    show_shapley_heatmap,
+)
+
+circuit = Circuit(
+    6,  # Number of inputs.
+    1,  # Number of outputs.
+    outputs=["OR(AND(I0, I1), AND(I4, I5))"],
+)
+
+result = explain(circuit, inputs=[1, 1, 0, 0, 1, 1], output=0)
+
+matrix = fold_shapley_values(result, columns=3)
+# Fold the 6 input attributions into 2 rows and 3 columns:
+# [
+#   [phi_I0, phi_I1, phi_I2],
+#   [phi_I3, phi_I4, phi_I5],
+# ]
+
+save_shapley_heatmap(
+    result,
+    columns=3,
+    path="local_shapley_heatmap.png",
+    title="Local Shapley values",
+    annotate=True,
+)
+# Save the heatmap image to local_shapley_heatmap.png.
+
+show_shapley_heatmap(result, columns=3)
+# Open an interactive matplotlib window for direct viewing.
+```
+
+For lower-level control, use `plot_shapley_heatmap(...)`, which returns
+`(fig, ax)` so you can further customize the matplotlib figure before saving or
+showing it.
 
 ## Algorithm
 
